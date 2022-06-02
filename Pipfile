@@ -9,6 +9,7 @@ numpy = "*"
 mypy = "*"
 black = "*"
 tqdm = "*"
+pre-commit = "*"
 
 [dev-packages]
 
