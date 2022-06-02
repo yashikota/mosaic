@@ -24,6 +24,26 @@ def get_mosaic_size() -> tuple[int, int]:
     return x, y
 
 
+def monochrome_or_color() -> bool:
+    print("モノクロなら\t1\nカラーなら\t2\tを選んでください")
+
+    try:
+        choice: int = int(input("選択:"))
+    except ValueError:
+        print("===数字を入力してください===")
+        return monochrome_or_color()
+
+    if not (choice == 1 or choice == 2):
+        print("===正しい数字を入力してください===")
+        return monochrome_or_color()
+
+    if choice == 1:
+        return True
+    elif choice == 2:
+        return False
+
+    return False
+
 def mosaic_image() -> np.ndarray:
     # 初期化
     pixel_list: list = []
@@ -40,9 +60,33 @@ def mosaic_image() -> np.ndarray:
     y: int
     x, y = get_mosaic_size()
 
-    print("height:{}\nwidth:{}".format(height, width))
-    print("height // x = {}\nwidth // y = {}".format(height // x, width // y))
+    # モノクロかカラーかを選ぶ
+    is_monochrome: bool = monochrome_or_color()
+    if is_monochrome:
+        # モノクロでモザイク化
+        img = monochrome(img, height, width, x, y, pixel_list, mean_list)
+    else:
+        # カラーでモザイク化
+        img = color(img, height, width, x, y, pixel_list, mean_list)
 
+    print(
+        "height({}) // x({}) = {} ... {}\nwidth({}) // y({}) = {} ...{}".format(
+            height, x, height // x, height % x, width, y, width // y, width % y
+        )
+    )
+
+    return img
+
+
+def monochrome(
+    img: np.ndarray,
+    height: int,
+    width: int,
+    x: int,
+    y: int,
+    pixel_list: list,
+    mean_list: list,
+) -> np.ndarray:
     # 割り切れる部分をモザイク化
     for i in tqdm((range(height // x))):
         for j in range((width // y)):
@@ -54,6 +98,37 @@ def mosaic_image() -> np.ndarray:
             img[i * y : i * y + y, j * x : j * x + x] = np.mean(
                 img[i * y : i * y + y, j * x : j * x + x]
             )
+
+    return img
+
+
+def color(
+    img: np.ndarray,
+    height: int,
+    width: int,
+    x: int,
+    y: int,
+    pixel_list: list,
+    mean_list: list,
+) -> np.ndarray:
+    # 割り切れる部分をモザイク化
+    for i in tqdm((range(height // x))):
+        for j in range((width // y)):
+            for k in range(3):
+                # 各画素を取得
+                pixel_list.append(
+                    img[i * y : i * y + y, j * x : j * x + x, k].reshape(-1)
+                )
+                # 各画素の平均値を計算
+                mean_list.append(np.mean(img[i * y : i * y + y, j * x : j * x + x, k]))
+                # 計算した平均値を画像に反映
+                img[i * y : i * y + y, j * x : j * x + x, k] = np.mean(
+                    img[i * y : i * y + y, j * x : j * x + x, k]
+                )
+
+                # リセット
+                pixel_list.clear()
+                mean_list.clear()
 
     return img
 
