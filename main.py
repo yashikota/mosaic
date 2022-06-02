@@ -16,16 +16,16 @@ def read_image(path: str) -> Tuple[np.ndarray, int, int]:
     return img, height, width
 
 
-def get_tile_size() -> Tuple[int, int]:
-    # タイルのサイズを入力
-    print("タイルのサイズを入力してください")
+def get_mosaic_size() -> Tuple[int, int]:
+    # モザイクの大きさを入力
+    print("モザイクの大きさを入力してください")
     x: int = int(input("縦:"))
     y: int = int(input("横:"))
 
     return x, y
 
 
-def compress_image() -> np.ndarray:
+def mosaic_image() -> np.ndarray:
     # 初期化
     pixel_list: list = []
     mean_list: list = []
@@ -36,15 +36,15 @@ def compress_image() -> np.ndarray:
     width: int
     img, height, width = read_image(sys.argv[1])
 
-    # タイルのサイズを取得
+    # モザイクの大きさを取得
     x: int
     y: int
-    x, y = get_tile_size()
+    x, y = get_mosaic_size()
 
-    print("height:{}\nwidth:{}\nx:{}\ny{}".format(height, width, x, y))
-    print("height // x:{}\nwidth // y:{}".format(height // x, width // y))
+    print("height:{}\nwidth:{}".format(height, width))
+    print("height // x = {}\nwidth // y = {}".format(height // x, width // y))
 
-    # 割り切れる部分のタイル化
+    # 割り切れる部分をモザイク
     for i in tqdm((range(width // y))):
         for j in range((height // x)):
             # 各画素を取得
@@ -63,14 +63,14 @@ def output_image(img: np.ndarray) -> None:
     # もし引数が指定されていたらその名前をつけて保存
     if len(sys.argv) == 3:
         cv2.imwrite(sys.argv[2], img)
-    # なければインプットされた画像のファイル名に-tileをつけて保存
+    # なければインプットされた画像のファイル名に-mosaicをつけて保存
     else:
-        cv2.imwrite(f"{sys.argv[1]}-tile.png", img)
+        cv2.imwrite(f"{(sys.argv[1][:-4])}-mosaic.png", img)
 
 
 def main():
-    # 画像をタイル圧縮
-    img: np.ndarray = compress_image()
+    # 画像をモザイク化
+    img: np.ndarray = mosaic_image()
 
     # 画像を出力
     output_image(img)
