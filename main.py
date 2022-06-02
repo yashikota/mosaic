@@ -43,9 +43,9 @@ def mosaic_image() -> np.ndarray:
     print("height:{}\nwidth:{}".format(height, width))
     print("height // x = {}\nwidth // y = {}".format(height // x, width // y))
 
-    # 割り切れる部分をモザイク
-    for i in tqdm((range(width // y))):
-        for j in range((height // x)):
+    # 割り切れる部分をモザイク化
+    for i in tqdm((range(height // x))):
+        for j in range((width // y)):
             # 各画素を取得
             pixel_list.append(img[i * y : i * y + y, j * x : j * x + x].reshape(-1))
             # 各画素の平均値を計算
