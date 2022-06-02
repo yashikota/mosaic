@@ -2,10 +2,9 @@ import cv2
 import numpy as np
 import sys
 from tqdm import tqdm
-from typing import Tuple
 
 
-def read_image(path: str) -> Tuple[np.ndarray, int, int]:
+def read_image(path: str) -> tuple[np.ndarray, int, int]:
     # 画像を読み込む
     img: np.ndarray = cv2.imread(path)
 
@@ -16,7 +15,7 @@ def read_image(path: str) -> Tuple[np.ndarray, int, int]:
     return img, height, width
 
 
-def get_mosaic_size() -> Tuple[int, int]:
+def get_mosaic_size() -> tuple[int, int]:
     # モザイクの大きさを入力
     print("モザイクの大きさを入力してください")
     x: int = int(input("縦:"))
